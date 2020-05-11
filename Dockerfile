@@ -9,46 +9,54 @@ MAINTAINER oktoshi <devteam@okcash.co>
 
 RUN apt-get update --yes && apt-get upgrade --yes && \
     apt-get install --yes software-properties-common && \
-    add-apt-repository --yes ppa:bitcoin/bitcoin && \
     apt-get update --yes && apt-get install --yes \
-       autoconf \
-       automake \
-       autotools-dev \
-       bsdmainutils \
-       build-essential \
-       git \
-       libboost-all-dev \
-       libboost-filesystem-dev \
-       libboost-program-options-dev \
-       libboost-system-dev \
-       libboost-test-dev \
-       libboost-thread-dev \
-       libdb4.8++-dev \
-       libdb4.8-dev \
-       libevent-dev \
-       libminiupnpc-dev \
-       libprotobuf-dev \
-       libqrencode-dev \
-       libqt5core5a \
-       libqt5dbus5 \
-       libqt5gui5 \
-       libqt5webkit5-dev  \
-       libsqlite3-dev \
-       libssl-dev \
-       libtool \
-       pkg-config \
-       protobuf-compiler \
-       qt5-default \
-       qtbase5-dev \
-       qtdeclarative5-dev \
-       qttools5-dev \
-       qttools5-dev-tools
+    autoconf \
+    automake \
+    autotools-dev \
+    bsdmainutils \
+    build-essential \
+    git \
+    libboost-all-dev \
+    libboost-filesystem-dev \
+    libboost-program-options-dev \
+    libboost-system-dev \
+    libboost-test-dev \
+    libboost-thread-dev \
+#    libdb++-dev \
+#    libdb-dev \
+    libevent-dev \
+    libminiupnpc-dev \
+    libprotobuf-dev \
+    libqrencode-dev \
+    libqt5core5a \
+    libqt5dbus5 \
+    libqt5gui5 \
+    libqt5webkit5-dev  \
+    libsqlite3-dev \
+    libssl-dev \
+    libtool \
+    pkg-config \
+    protobuf-compiler \
+    qt5-default \
+    qtbase5-dev \
+    qtdeclarative5-dev \
+    qttools5-dev \
+    qttools5-dev-tools \
+    wget
+
+RUN wget http://download.oracle.com/berkeley-db/db-4.8.30.zip && \
+    unzip db-4.8.30.zip && \
+    cd db-4.8.30 && \
+    cd build_unix/ && \
+    ../dist/configure --prefix=/usr/local  --enable-mingw --enable-cxx && \
+    make && \
+    make install
 
 RUN git clone https://github.com/okcashpro/okcash /node/okcashsource
 
 WORKDIR /node/okcashsource/src
 
-RUN makefile -f makefile.unix USE_UPNP=- && strip okcashd && mv okcashd /node/okcashd && rm -rf /node/okcashsource
+RUN make -f makefile.unix USE_UPNP=- && strip okcashd && mv okcashd /node/okcashd && rm -rf /node/okcashsource
 
 WORKDIR /node
 VOLUME ["/node/home"]
